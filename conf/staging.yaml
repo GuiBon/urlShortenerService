@@ -1,0 +1,6 @@
+database:
+  user: user
+  password: password
+  dbname: urlshortenerdb
+  host: postgres
+  port: 5432

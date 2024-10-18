@@ -1,0 +1,6 @@
+database:
+  user: testuser
+  password: testpassword
+  dbname: testdb
+  host: localhost
+  port: 54322
