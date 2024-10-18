@@ -1,0 +1,6 @@
+# Binaries
+main
+
+# Docker files
+Dockerfile
+.dockerignore
