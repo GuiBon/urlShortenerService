@@ -1,10 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"urlShortenerService/internal/command"
 	"urlShortenerService/internal/infrastructure/config"
 	"urlShortenerService/internal/infrastructure/shorturl"
 	"urlShortenerService/internal/transport/http"
+	"urlShortenerService/internal/usecase"
 
 	"github.com/joho/godotenv"
 )
@@ -26,11 +29,16 @@ func main() {
 	router := http.NewRouter()
 
 	// Initialize the database
-	_, err = shorturl.NewPSQLStore(cfg.Database)
+	shortURLStore, err := shorturl.NewPSQLStore(cfg.Database)
 	if err != nil {
 		log.Fatalf("Error initializing database [%s]: %s", cfg.Database.DbName, err.Error())
 	}
 
-	// Start the service on the port 8080
-	router.Run(":8080")
+	// Build the commands
+	urlSanitizerCmd := command.URLSanitizerCmdBuilder()
+	slugGeneratorCmd := command.SlugGeneratorCmdBuilder()
+	_ = usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore)
+
+	// Start the service
+	router.Run(fmt.Sprintf(":%d", cfg.ServerDomain.Port))
 }

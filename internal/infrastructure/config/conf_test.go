@@ -51,3 +51,33 @@ func TestToConnString(t *testing.T) {
 	// Then
 	assert.Equal(t, "postgres://user:password@localhost:5432/dbtest?sslmode=disable", connString)
 }
+
+func TestCreateBaseURL(t *testing.T) {
+	t.Run("with port", func(t *testing.T) {
+		// Given
+		cfg := ServerDomainConfig{
+			Scheme: "http",
+			Domain: "localhost",
+			Port:   8080,
+		}
+
+		// When
+		baseURL := cfg.CreateBaseURL()
+
+		// Then
+		assert.Equal(t, "http://localhost:8080", baseURL)
+	})
+	t.Run("without port", func(t *testing.T) {
+		// Given
+		cfg := ServerDomainConfig{
+			Scheme: "https",
+			Domain: "www.example.com",
+		}
+
+		// When
+		baseURL := cfg.CreateBaseURL()
+
+		// Then
+		assert.Equal(t, "https://www.example.com", baseURL)
+	})
+}

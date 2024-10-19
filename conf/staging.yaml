@@ -4,3 +4,7 @@ database:
   dbname: urlshortenerdb
   host: postgres
   port: 5432
+server-domain:
+  scheme: http
+  domain: localhost
+  port: 8080

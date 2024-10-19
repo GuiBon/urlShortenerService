@@ -29,7 +29,8 @@ func Load() (*Conf, error) {
 
 // Conf represents the configuration of the application
 type Conf struct {
-	Database PSQLConnConfig `mapstructure:"database"`
+	Database     PSQLConnConfig     `mapstructure:"database"`
+	ServerDomain ServerDomainConfig `mapstructure:"server-domain"`
 }
 
 // PSQLConnConfig represents the configuration to connect to a PSQL database
@@ -44,4 +45,20 @@ type PSQLConnConfig struct {
 // ToConnString generates a conn string based on the conn config
 func (c *PSQLConnConfig) ToConnString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", c.User, c.Password, c.Host, c.Port, c.DbName)
+}
+
+// ServerDomainConfig represents the configuration of the server domain
+type ServerDomainConfig struct {
+	Scheme string `mapstructure:"scheme"`
+	Domain string `mapstructure:"domain"`
+	Port   int    `mapstructure:"port"`
+}
+
+// CreateBaseURL creates the base URL of the server
+func (c *ServerDomainConfig) CreateBaseURL() string {
+	baseURL := fmt.Sprintf("%s://%s", c.Scheme, c.Domain)
+	if c.Port != 0 {
+		baseURL = fmt.Sprintf("%s:%d", baseURL, c.Port)
+	}
+	return baseURL
 }
