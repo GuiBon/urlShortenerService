@@ -49,6 +49,10 @@ docker-compose -f docker-compose.test.yml down
 
 Once the application is running, you can access the **Swagger UI** interface by clicking [here](http://localhost:8080/swagger/index.html) or visiting the following URL in your browser: `http://localhost:8080/swagger/index.html`
 
+## Postman
+
+A postman collection is saved under `docs/UrlShortener.postman_collection.json`, feel free to import it to Postman in order to ease your testing session.
+
 ## Explanation of the Shortened Algorithm
 
 The algorithm takes a URL and generates a short identifier called a slug. It does this by following these steps:
