@@ -4,11 +4,11 @@ info:
   description: API for URL shortening service
   version: 1.0.0
 servers:
-  - url: http://localhost:8080/api/url-shortener
+  - url: http://localhost:8080
     description: Local server
 
 paths:
-  /v1/health:
+  /api/url-shortener/v1/health:
     get:
       summary: Health check
       description: Check the health status of the service
@@ -17,10 +17,10 @@ paths:
       responses:
         "200":
           description: Service is healthy
-  /v1/shorten:
+  /api/url-shortener/v1/shorten:
     post:
       summary: Create a shortened URL
-      description: TODO
+      description: Creates a consistent shortened URL for the given URL
       tags:
         - short URL
       requestBody:
@@ -42,6 +42,45 @@ paths:
           description: The original URL is invalid
         "500":
           description: Unexpected error
+  /{slug}:
+    get:
+      summary: Retrieve an original URL
+      description: Retrieves an original URL given a slug
+      tags:
+        - short URL
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: The slug for the shortened URL
+          schema:
+            type: string
+            example: abc12345
+        - name: redirect
+          in: query
+          required: false
+          description: If set to 'true', redirects to the original URL instead of returning it
+          schema:
+            type: string
+            enum:
+              - "true"
+            default: "false"
+      responses:
+        "200":
+          description: Original URL retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetOriginalURLResponse"
+        "302":
+          description: Original URL retrieved and redirecting to it as asked
+        "404":
+          description: No URL associated to the given slug found
+        "422":
+          description: The slug is invalid
+        "500":
+          description: Unexpected error
+
 
 components:
   schemas:
@@ -60,3 +99,10 @@ components:
         short_url:
           type: string
           example: "http://localhost:8080/abc12345"
+
+    GetOriginalURLResponse:
+      type: object
+      properties:
+        original_url:
+          type: string
+          example: "http://example.com"

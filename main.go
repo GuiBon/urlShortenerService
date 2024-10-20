@@ -38,10 +38,10 @@ func main() {
 	slugGeneratorCmd := command.SlugGeneratorCmdBuilder(cfg.SlugMaximalLenght)
 	slugValidatorCmd := command.SlugValidatorCmdBuilder(cfg.SlugMaximalLenght)
 	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore)
-	_ = usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore)
+	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore)
 
 	// Initialize the HTTP router
-	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd)
+	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd)
 
 	// Start the service
 	router.Run(fmt.Sprintf(":%d", cfg.ServerDomain.Port))

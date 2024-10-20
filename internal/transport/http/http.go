@@ -31,11 +31,11 @@ func NewBuilder(env domain.Environment) *Builder {
 }
 
 // BuildRouter builds the gin Engine router
-func (b *Builder) BuildRouter(createShortenURLCmd usecase.CreateShortenURLCmd) *gin.Engine {
-	b.
+func (b *Builder) BuildRouter(createShortenURLCmd usecase.CreateShortenURLCmd, getOriginalURLCmd usecase.GetOriginalURLCmd) *gin.Engine {
+	return b.
 		WithSwaggerHandler().
 		WithV1HealthHandler().
-		WithV1CreateShortenURLHandler(createShortenURLCmd)
-
-	return b.router
+		WithV1CreateShortenURLHandler(createShortenURLCmd).
+		WithGetOriginalURLHandler(getOriginalURLCmd).
+		router
 }
