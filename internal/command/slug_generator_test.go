@@ -10,7 +10,7 @@ func TestGenerateSlug(t *testing.T) {
 	t.Run("nominal", func(t *testing.T) {
 		// Given
 		url := "https://example.com"
-		cmd := SlugGeneratorCmdBuilder()
+		cmd := SlugGeneratorCmdBuilder(8)
 
 		// When
 		slug := cmd(url)
@@ -22,7 +22,7 @@ func TestGenerateSlug(t *testing.T) {
 		// Given
 		url := "https://example.com"
 		slugs := map[string]interface{}{}
-		cmd := SlugGeneratorCmdBuilder()
+		cmd := SlugGeneratorCmdBuilder(8)
 
 		// When
 		for i := 0; i < 5; i++ {

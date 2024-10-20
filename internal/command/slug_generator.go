@@ -10,7 +10,7 @@ import (
 type SlugGeneratorCmd func(url string) string
 
 // generateSlug generates a consistent slug for a given URL
-func generateSlug() SlugGeneratorCmd {
+func generateSlug(slugLenght int) SlugGeneratorCmd {
 	return func(url string) string {
 		// Generate SHA-1 hash of the URL
 		hasher := sha1.New()
@@ -22,8 +22,8 @@ func generateSlug() SlugGeneratorCmd {
 
 		// Shorten the slug to only 8 characters
 		slug := base62Hash
-		if len(slug) > 8 {
-			slug = slug[:8]
+		if len(slug) > slugLenght {
+			slug = slug[:slugLenght]
 		}
 
 		return slug
@@ -31,6 +31,6 @@ func generateSlug() SlugGeneratorCmd {
 }
 
 // SlugGeneratorCmdBuilder builds a slug generator command
-func SlugGeneratorCmdBuilder() SlugGeneratorCmd {
-	return generateSlug()
+func SlugGeneratorCmdBuilder(slugLenght int) SlugGeneratorCmd {
+	return generateSlug(slugLenght)
 }

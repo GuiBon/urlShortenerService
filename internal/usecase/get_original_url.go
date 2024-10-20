@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"urlShortenerService/internal/command"
 	"urlShortenerService/internal/infrastructure/shorturl"
 )
 
@@ -9,8 +10,14 @@ import (
 type GetOriginalURLCmd func(ctx context.Context, shortURL string) (string, error)
 
 // getOriginalURL retrives an original URL given a slug
-func getOriginalURL(shortURLStore shorturl.Store) GetOriginalURLCmd {
+func getOriginalURL(slugValidatorCmd command.SlugValidatorCmd, shortURLStore shorturl.Store) GetOriginalURLCmd {
 	return func(ctx context.Context, slug string) (string, error) {
+		// Ensure slug validity to avoid useless query to store
+		err := slugValidatorCmd(slug)
+		if err != nil {
+			return "", err
+		}
+
 		// Retrieves URL
 		urlMapping, err := shortURLStore.Get(ctx, slug)
 		if err != nil {
@@ -22,6 +29,6 @@ func getOriginalURL(shortURLStore shorturl.Store) GetOriginalURLCmd {
 }
 
 // GetOriginalURLCmdBuilder builds the command that will retrieves an original URL
-func GetOriginalURLCmdBuilder(shortURLStore shorturl.Store) GetOriginalURLCmd {
-	return getOriginalURL(shortURLStore)
+func GetOriginalURLCmdBuilder(slugValidatorCmd command.SlugValidatorCmd, shortURLStore shorturl.Store) GetOriginalURLCmd {
+	return getOriginalURL(slugValidatorCmd, shortURLStore)
 }

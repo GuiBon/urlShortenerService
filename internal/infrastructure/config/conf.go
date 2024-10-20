@@ -9,6 +9,10 @@ import (
 
 // Load reads and loads the config inside a structure
 func Load() (*Conf, error) {
+	// Load default
+	viper.SetDefault("slug-maximal-lenght", 8)
+
+	// Load from config file
 	viper.SetConfigName(os.Getenv("env"))
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("../../../conf/") // Local and test
@@ -29,8 +33,9 @@ func Load() (*Conf, error) {
 
 // Conf represents the configuration of the application
 type Conf struct {
-	Database     PSQLConnConfig     `mapstructure:"database"`
-	ServerDomain ServerDomainConfig `mapstructure:"server-domain"`
+	Database          PSQLConnConfig     `mapstructure:"database"`
+	ServerDomain      ServerDomainConfig `mapstructure:"server-domain"`
+	SlugMaximalLenght int                `mapstructure:"slug-maximal-lenght"`
 }
 
 // PSQLConnConfig represents the configuration to connect to a PSQL database
