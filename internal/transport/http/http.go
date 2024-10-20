@@ -33,6 +33,7 @@ func NewBuilder(env domain.Environment) *Builder {
 // BuildRouter builds the gin Engine router
 func (b *Builder) BuildRouter(createShortenURLCmd usecase.CreateShortenURLCmd) *gin.Engine {
 	b.
+		WithSwaggerHandler().
 		WithV1HealthHandler().
 		WithV1CreateShortenURLHandler(createShortenURLCmd)
 

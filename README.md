@@ -45,6 +45,10 @@ go test ./...
 docker-compose -f docker-compose.test.yml down
 ```
 
+## Swagger
+
+Once the application is running, you can access the **Swagger UI** interface by clicking [here](http://localhost:8080/swagger/index.html) or visiting the following URL in your browser: `http://localhost:8080/swagger/index.html`
+
 ## Explanation of the Shortened Algorithm
 
 The algorithm takes a URL and generates a short identifier called a slug. It does this by following these steps:

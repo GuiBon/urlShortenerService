@@ -43,7 +43,7 @@ func v1CreateShortenURLHandler(cmd usecase.CreateShortenURLCmd) gin.HandlerFunc 
 		shortenedURL, err := cmd(c.Request.Context(), createShortenURLRequest.OriginalURL)
 		switch err {
 		case nil:
-			c.JSON(http.StatusOK, CreateShortenURLResponse{ShortURL: shortenedURL})
+			c.JSON(http.StatusCreated, CreateShortenURLResponse{ShortURL: shortenedURL})
 			return
 		case command.ErrInvalidURL:
 			c.JSON(http.StatusUnprocessableEntity, CreateAPIError(ApiError{

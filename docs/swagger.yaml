@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: URL Shortener API
+  description: API for URL shortening service
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/url-shortener
+    description: Local server
+
+paths:
+  /v1/health:
+    get:
+      summary: Health check
+      description: Check the health status of the service
+      tags:
+        - health
+      responses:
+        "200":
+          description: Service is healthy
+  /v1/shorten:
+    post:
+      summary: Create a shortened URL
+      description: TODO
+      tags:
+        - short URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateShortenURLRequest"
+      responses:
+        "201":
+          description: URL shortened successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateShortenURLResponse"
+        "400":
+          description: The body is malformated or missing information
+        "422":
+          description: The original URL is invalid
+        "500":
+          description: Unexpected error
+
+components:
+  schemas:
+    CreateShortenURLRequest:
+      type: object
+      required:
+        - original_url
+      properties:
+        original_url:
+          type: string
+          example: "https://example.com"
+
+    CreateShortenURLResponse:
+      type: object
+      properties:
+        short_url:
+          type: string
+          example: "http://localhost:8080/abc12345"

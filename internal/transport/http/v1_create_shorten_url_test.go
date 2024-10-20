@@ -29,7 +29,7 @@ func TestWithV1CreateShortenURLHandler(t *testing.T) {
 		}
 	}
 
-	t.Run("ok", func(t *testing.T) {
+	t.Run("created", func(t *testing.T) {
 		// Given
 		router := NewBuilder(domain.EnvTest).WithV1CreateShortenURLHandler(mockCmd(nil)).router
 
@@ -39,7 +39,7 @@ func TestWithV1CreateShortenURLHandler(t *testing.T) {
 		router.ServeHTTP(record, req)
 
 		// Then
-		assert.Equal(t, http.StatusOK, record.Code)
+		assert.Equal(t, http.StatusCreated, record.Code)
 		bodyResponse := CreateShortenURLResponse{}
 		require.NoError(t, json.Unmarshal(record.Body.Bytes(), &bodyResponse))
 		assert.Equal(t, shortURL, bodyResponse.ShortURL)

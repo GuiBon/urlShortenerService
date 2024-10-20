@@ -16,6 +16,8 @@ services:
   url-shortener-service:
     image: url-shortener-service
     build: .
+    volumes:
+      - ./docs:/app/docs
     ports:
       - "8080:8080"
     depends_on:
