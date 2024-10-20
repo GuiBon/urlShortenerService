@@ -26,9 +26,9 @@ func RunStoreTests(t *testing.T, store Store) {
 func (suite *StoreTestSuite) TestSet(t *testing.T) {
 	// Given
 	ctx := context.Background()
-	shortURL := domain.ShortURL{
-		Slug: "example",
-		URL:  "https://example.com",
+	shortURL := domain.URLMapping{
+		Slug:        "example",
+		OriginalURL: "https://example.com",
 	}
 
 	// When
@@ -39,7 +39,7 @@ func (suite *StoreTestSuite) TestSet(t *testing.T) {
 	retrievedURL, err := suite.Store.Get(ctx, shortURL.Slug)
 	require.NoError(t, err)
 	assert.Equal(t, shortURL.Slug, retrievedURL.Slug)
-	assert.Equal(t, shortURL.URL, retrievedURL.URL)
+	assert.Equal(t, shortURL.OriginalURL, retrievedURL.OriginalURL)
 	assert.NotEmpty(t, retrievedURL.InsertedAt)
 }
 
@@ -47,9 +47,9 @@ func (suite *StoreTestSuite) TestGet(t *testing.T) {
 	t.Run("nominal", func(t *testing.T) {
 		// Given
 		ctx := context.Background()
-		shortURL := domain.ShortURL{
-			Slug: "example",
-			URL:  "https://example.com",
+		shortURL := domain.URLMapping{
+			Slug:        "example",
+			OriginalURL: "https://example.com",
 		}
 		err := suite.Store.Set(ctx, shortURL)
 		require.NoError(t, err)
@@ -60,7 +60,7 @@ func (suite *StoreTestSuite) TestGet(t *testing.T) {
 
 		// Then
 		assert.Equal(t, shortURL.Slug, retrievedURL.Slug)
-		assert.Equal(t, shortURL.URL, retrievedURL.URL)
+		assert.Equal(t, shortURL.OriginalURL, retrievedURL.OriginalURL)
 		assert.NotEmpty(t, retrievedURL.InsertedAt)
 	})
 	t.Run("slug not found", func(t *testing.T) {
@@ -79,15 +79,15 @@ func (suite *StoreTestSuite) TestGet(t *testing.T) {
 func (suite *StoreTestSuite) TestSetDuplicateSlug(t *testing.T) {
 	// Given
 	ctx := context.Background()
-	shortURL1 := domain.ShortURL{
-		Slug:       "duplicate",
-		URL:        "https://example.com/duplicate",
-		InsertedAt: time.Now().Add(-4 * time.Hour).UTC(),
+	shortURL1 := domain.URLMapping{
+		Slug:        "duplicate",
+		OriginalURL: "https://example.com/duplicate",
+		InsertedAt:  time.Now().Add(-4 * time.Hour).UTC(),
 	}
-	shortURL2 := domain.ShortURL{
-		Slug:       "duplicate",
-		URL:        "https://example.com/duplicate",
-		InsertedAt: time.Now().Add(-1 * time.Hour).UTC(),
+	shortURL2 := domain.URLMapping{
+		Slug:        "duplicate",
+		OriginalURL: "https://example.com/duplicate",
+		InsertedAt:  time.Now().Add(-1 * time.Hour).UTC(),
 	}
 
 	// When
@@ -100,17 +100,17 @@ func (suite *StoreTestSuite) TestSetDuplicateSlug(t *testing.T) {
 	retrievedURL, err := suite.Store.Get(ctx, shortURL1.Slug)
 	require.NoError(t, err)
 	assert.Equal(t, shortURL1.Slug, retrievedURL.Slug)
-	assert.Equal(t, shortURL1.URL, retrievedURL.URL)
+	assert.Equal(t, shortURL1.OriginalURL, retrievedURL.OriginalURL)
 	assert.Equal(t, shortURL2.InsertedAt.Truncate(time.Second), retrievedURL.InsertedAt.Truncate(time.Second))
 }
 
 func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
 	// Given
 	ctx := context.Background()
-	shortURL := domain.ShortURL{
-		Slug:       "expired",
-		URL:        "https://example.com/expired",
-		InsertedAt: time.Now().Add(-24 * time.Hour).UTC(),
+	shortURL := domain.URLMapping{
+		Slug:        "expired",
+		OriginalURL: "https://example.com/expired",
+		InsertedAt:  time.Now().Add(-24 * time.Hour).UTC(),
 	}
 	err := suite.Store.Set(ctx, shortURL)
 	require.NoError(t, err)

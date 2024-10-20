@@ -46,18 +46,18 @@ func (_m *MockStore) DeleteExpired(ctx context.Context, duration time.Duration) 
 }
 
 // Get provides a mock function with given fields: ctx, slug
-func (_m *MockStore) Get(ctx context.Context, slug string) (domain.ShortURL, error) {
+func (_m *MockStore) Get(ctx context.Context, slug string) (domain.URLMapping, error) {
 	ret := _m.Called(ctx, slug)
 
-	var r0 domain.ShortURL
+	var r0 domain.URLMapping
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) (domain.ShortURL, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) (domain.URLMapping, error)); ok {
 		return rf(ctx, slug)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string) domain.ShortURL); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string) domain.URLMapping); ok {
 		r0 = rf(ctx, slug)
 	} else {
-		r0 = ret.Get(0).(domain.ShortURL)
+		r0 = ret.Get(0).(domain.URLMapping)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
@@ -70,11 +70,11 @@ func (_m *MockStore) Get(ctx context.Context, slug string) (domain.ShortURL, err
 }
 
 // Set provides a mock function with given fields: ctx, slug, fullURL
-func (_m *MockStore) Set(ctx context.Context, shortURL domain.ShortURL) error {
+func (_m *MockStore) Set(ctx context.Context, shortURL domain.URLMapping) error {
 	ret := _m.Called(ctx, shortURL)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, domain.ShortURL) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, domain.URLMapping) error); ok {
 		r0 = rf(ctx, shortURL)
 	} else {
 		r0 = ret.Error(0)

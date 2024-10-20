@@ -17,7 +17,7 @@ type Store interface {
 	// DeleteExpired deletes the slug / URL couples that are expired
 	DeleteExpired(ctx context.Context, duration time.Duration) error
 	// Get retrieves the URL associated to a specific slug
-	Get(ctx context.Context, slug string) (domain.ShortURL, error)
+	Get(ctx context.Context, slug string) (domain.URLMapping, error)
 	// Set stores the slug and the URL associated
-	Set(ctx context.Context, shortURL domain.ShortURL) error
+	Set(ctx context.Context, shortURL domain.URLMapping) error
 }

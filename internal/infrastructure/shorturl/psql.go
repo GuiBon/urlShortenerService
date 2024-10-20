@@ -15,9 +15,9 @@ var (
 	// deleteExpiredStmt is the prepared statement to delete expired slug / url couple from the database
 	deleteExpiredStmt string = "DELETE FROM urls WHERE inserted_at < $1;"
 	// getStmt is the prepared statement to retrieve a url given a slug from the database
-	getStmt string = "SELECT slug, url, inserted_at FROM urls WHERE slug=$1;"
+	getStmt string = "SELECT slug, original_url, inserted_at FROM urls WHERE slug=$1;"
 	// setStmt is the prepared statement to insert a slug / url couple into the database
-	setStmt string = "INSERT INTO urls (slug, url, inserted_at) VALUES ($1, $2, $3) ON CONFLICT (slug) DO UPDATE SET inserted_at = $3;"
+	setStmt string = "INSERT INTO urls (slug, original_url, inserted_at) VALUES ($1, $2, $3) ON CONFLICT (slug) DO UPDATE SET inserted_at = $3;"
 )
 
 // PSQLStore represents a postgres SQL store
@@ -48,7 +48,7 @@ func (s *PSQLStore) initTables(ctx context.Context) error {
 	createTableQuery := `
 	CREATE TABLE IF NOT EXISTS urls (
 		slug TEXT PRIMARY KEY,
-		url TEXT NOT NULL,
+		original_url TEXT NOT NULL,
 		inserted_at TIMESTAMP NOT NULL
 	);`
 
@@ -68,9 +68,9 @@ func (s *PSQLStore) DeleteExpired(ctx context.Context, duration time.Duration) e
 }
 
 // Get implements the Store interface
-func (s *PSQLStore) Get(ctx context.Context, slug string) (domain.ShortURL, error) {
-	var url domain.ShortURL
-	err := s.conn.QueryRow(ctx, getStmt, slug).Scan(&url.Slug, &url.URL, &url.InsertedAt)
+func (s *PSQLStore) Get(ctx context.Context, slug string) (domain.URLMapping, error) {
+	var url domain.URLMapping
+	err := s.conn.QueryRow(ctx, getStmt, slug).Scan(&url.Slug, &url.OriginalURL, &url.InsertedAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return url, ErrNotFound
@@ -81,11 +81,11 @@ func (s *PSQLStore) Get(ctx context.Context, slug string) (domain.ShortURL, erro
 }
 
 // Set implements the Store interface
-func (s *PSQLStore) Set(ctx context.Context, shortURL domain.ShortURL) error {
+func (s *PSQLStore) Set(ctx context.Context, shortURL domain.URLMapping) error {
 	if shortURL.InsertedAt.IsZero() {
 		shortURL.InsertedAt = time.Now()
 	}
-	_, err := s.conn.Exec(ctx, setStmt, shortURL.Slug, shortURL.URL, shortURL.InsertedAt.UTC())
+	_, err := s.conn.Exec(ctx, setStmt, shortURL.Slug, shortURL.OriginalURL, shortURL.InsertedAt.UTC())
 	return err
 }
 

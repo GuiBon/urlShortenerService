@@ -40,7 +40,7 @@ func TestCreateShortenURLCmdBuilder(t *testing.T) {
 		urlSanitizerCmd := urlSanitizerStub(&originalURL, sanitizedURL, nil)
 		slugGeneratorCmd := slugGeneratorStub(&sanitizedURL, slug)
 		shortURLMock := shorturl.NewMock(t)
-		shortURLMock.On("Set", mock.Anything, domain.ShortURL{Slug: slug, URL: sanitizedURL}).Return(nil)
+		shortURLMock.On("Set", mock.Anything, domain.URLMapping{Slug: slug, OriginalURL: sanitizedURL}).Return(nil)
 		cmd := CreateShortenURLCmdBuilder(baseURL, urlSanitizerCmd, slugGeneratorCmd, shortURLMock)
 
 		// When

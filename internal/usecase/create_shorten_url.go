@@ -25,9 +25,9 @@ func createShortenURL(baseURL string, urlSanitizerCmd command.URLSanitizerCmd,
 		slug := slugGeneratorCmd(sanitizedURLToShorten)
 
 		// Save URL
-		err = shortURLStore.Set(ctx, domain.ShortURL{
-			Slug: slug,
-			URL:  sanitizedURLToShorten,
+		err = shortURLStore.Set(ctx, domain.URLMapping{
+			Slug:        slug,
+			OriginalURL: sanitizedURLToShorten,
 		})
 		if err != nil {
 			return "", err
