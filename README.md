@@ -73,3 +73,7 @@ One important feature of this algorithm is consistency. This consistency is achi
 2. The Base62 encoding of this hash also does not change, as it strictly follows the same conversion method without any random elements.
 
 This means that the same URL will always generate the same slug each time it is processed. Slug generation will not change for a specific URL, as it is not influenced by any external factors like random numbers or changing variables.
+
+## Expiration
+
+In this service, a cron job is configured to automatically delete expired URLs. The job runs every 10 minutes and removes any URLs that have been stored for more than one week (The expiration time can be set in the application configuration). This ensures that old, unused URLs are regularly cleaned up, optimizing storage and maintaining the database's performance.

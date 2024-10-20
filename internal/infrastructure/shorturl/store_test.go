@@ -107,19 +107,29 @@ func (suite *StoreTestSuite) TestSetDuplicateSlug(t *testing.T) {
 func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
 	// Given
 	ctx := context.Background()
-	shortURL := domain.URLMapping{
+	shortURLExpired := domain.URLMapping{
 		Slug:        "expired",
 		OriginalURL: "https://example.com/expired",
 		InsertedAt:  time.Now().Add(-24 * time.Hour).UTC(),
 	}
-	err := suite.Store.Set(ctx, shortURL)
+	shortURL := domain.URLMapping{
+		Slug:        "expired",
+		OriginalURL: "https://example.com/expired",
+		InsertedAt:  time.Now().UTC(),
+	}
+	err := suite.Store.Set(ctx, shortURLExpired)
+	require.NoError(t, err)
+	err = suite.Store.Set(ctx, shortURL)
 	require.NoError(t, err)
 
 	// When
-	err = suite.Store.DeleteExpired(ctx, 1*time.Hour)
+	nbDeleted, err := suite.Store.DeleteExpired(ctx, 1*time.Hour)
 	require.NoError(t, err)
 
 	// Then
-	_, err = suite.Store.Get(ctx, shortURL.Slug)
+	assert.Equal(t, 1, nbDeleted)
+	_, err = suite.Store.Get(ctx, shortURLExpired.Slug)
 	assert.ErrorIs(t, err, ErrNotFound)
+	_, err = suite.Store.Get(ctx, shortURL.Slug)
+	assert.NoError(t, err)
 }

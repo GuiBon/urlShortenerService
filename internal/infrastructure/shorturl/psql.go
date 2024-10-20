@@ -61,10 +61,11 @@ func (s *PSQLStore) initTables(ctx context.Context) error {
 }
 
 // DeleteExpired implements the Store interface
-func (s *PSQLStore) DeleteExpired(ctx context.Context, duration time.Duration) error {
-	cutoff := time.Now().Add(-duration)
-	_, err := s.conn.Exec(ctx, deleteExpiredStmt, cutoff)
-	return err
+func (s *PSQLStore) DeleteExpired(ctx context.Context, timeToExpire time.Duration) (int, error) {
+	cutoff := time.Now().UTC().Add(-timeToExpire)
+	commandTag, err := s.conn.Exec(ctx, deleteExpiredStmt, cutoff)
+	deletedCount := commandTag.RowsAffected()
+	return int(deletedCount), err
 }
 
 // Get implements the Store interface

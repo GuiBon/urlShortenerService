@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -11,10 +13,16 @@ import (
 	"urlShortenerService/internal/transport/http"
 	"urlShortenerService/internal/usecase"
 
+	"github.com/golang/glog"
 	"github.com/joho/godotenv"
+	"github.com/robfig/cron/v3"
 )
 
 func main() {
+	// Set flag to output glog logs to stderr
+	flag.Set("logtostderr", "true")
+	flag.Parse()
+
 	// Load env variables
 	err := godotenv.Load()
 	if err != nil {
@@ -35,10 +43,33 @@ func main() {
 
 	// Build the commands
 	urlSanitizerCmd := command.URLSanitizerCmdBuilder()
-	slugGeneratorCmd := command.SlugGeneratorCmdBuilder(cfg.SlugMaximalLenght)
-	slugValidatorCmd := command.SlugValidatorCmdBuilder(cfg.SlugMaximalLenght)
+	slugGeneratorCmd := command.SlugGeneratorCmdBuilder(cfg.Slug.MaximalLenght)
+	slugValidatorCmd := command.SlugValidatorCmdBuilder(cfg.Slug.MaximalLenght)
 	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore)
 	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore)
+	deleteExpiredURLsCmd := usecase.DeleteExpiredURLsCmdBuilder(cfg.Slug.TimeToExpire, shortURLStore)
+
+	// Build the cron job function
+	cronJob := func() {
+		glog.Info("cron to delete expired URLs started")
+		nbURLsDeleterd, err := deleteExpiredURLsCmd(context.Background())
+		if err != nil {
+			glog.Warningf("failed to delete expired URLs: %w", err)
+		} else {
+			glog.Infof("cron to delete expired URLs done. [%d] URLs deleted", nbURLsDeleterd)
+		}
+	}
+
+	// Run the cron job function at startup
+	cronJob()
+
+	// Initialize the cron to delete expired urls and start it
+	c := cron.New()
+	_, err = c.AddFunc("*/10 * * * *", cronJob) // Every 10 minutes
+	if err != nil {
+		log.Fatalf("Error initializing delete expired urls cron: %s", err.Error())
+	}
+	c.Start()
 
 	// Initialize the HTTP router
 	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd)

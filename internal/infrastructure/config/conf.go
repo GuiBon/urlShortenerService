@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/viper"
 )
@@ -10,7 +11,8 @@ import (
 // Load reads and loads the config inside a structure
 func Load() (*Conf, error) {
 	// Load default
-	viper.SetDefault("slug-maximal-lenght", 8)
+	viper.SetDefault("slug.maximal-lenght", 8)
+	viper.SetDefault("slug.time-to-expire", 7*24*time.Hour) // One week
 
 	// Load from config file
 	viper.SetConfigName(os.Getenv("env"))
@@ -33,9 +35,9 @@ func Load() (*Conf, error) {
 
 // Conf represents the configuration of the application
 type Conf struct {
-	Database          PSQLConnConfig     `mapstructure:"database"`
-	ServerDomain      ServerDomainConfig `mapstructure:"server-domain"`
-	SlugMaximalLenght int                `mapstructure:"slug-maximal-lenght"`
+	Database     PSQLConnConfig     `mapstructure:"database"`
+	ServerDomain ServerDomainConfig `mapstructure:"server-domain"`
+	Slug         SlugConfig         `mapstructure:"slug"`
 }
 
 // PSQLConnConfig represents the configuration to connect to a PSQL database
@@ -66,4 +68,10 @@ func (c *ServerDomainConfig) CreateBaseURL() string {
 		baseURL = fmt.Sprintf("%s:%d", baseURL, c.Port)
 	}
 	return baseURL
+}
+
+// SlugConfig represents the configuration of the slug
+type SlugConfig struct {
+	MaximalLenght int           `mapstructure:"maximal-lenght"`
+	TimeToExpire  time.Duration `mapstructure:"time-to-expire"`
 }
