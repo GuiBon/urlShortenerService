@@ -29,8 +29,11 @@ func createShortenURL(baseURL string, urlSanitizerCmd command.URLSanitizerCmd,
 			Slug: slug,
 			URL:  sanitizedURLToShorten,
 		})
+		if err != nil {
+			return "", err
+		}
 
-		return fmt.Sprintf("%s/%s", baseURL, slug), err
+		return fmt.Sprintf("%s/%s", baseURL, slug), nil
 	}
 }
 

@@ -17,9 +17,9 @@ type MockStore struct {
 }
 
 
-// NewStore creates a new instance of Store. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
+// NewMock creates a new instance of Store. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
-func NewStore(t interface {
+func NewMock(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockStore {
