@@ -54,24 +54,24 @@ func (_m *MockStore) GetOne(ctx context.Context, url string) (domain.URLStatisti
 }
 
 // GetTop provides a mock function with given fields: ctx, statType
-func (_m *MockStore) GetTop(ctx context.Context, statType StatisticType) ([]domain.URLStatistic, error) {
-	ret := _m.Called(ctx, statType)
+func (_m *MockStore) GetTop(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
+	ret := _m.Called(ctx, statType, limitOveride)
 
 	var r0 []domain.URLStatistic
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, StatisticType) ([]domain.URLStatistic, error)); ok {
-		return rf(ctx, statType)
+	if rf, ok := ret.Get(0).(func(context.Context, StatisticType, int64) ([]domain.URLStatistic, error)); ok {
+		return rf(ctx, statType, limitOveride)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, StatisticType) []domain.URLStatistic); ok {
-		r0 = rf(ctx, statType)
+	if rf, ok := ret.Get(0).(func(context.Context, StatisticType, int64) []domain.URLStatistic); ok {
+		r0 = rf(ctx, statType, limitOveride)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]domain.URLStatistic)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, StatisticType) error); ok {
-		r1 = rf(ctx, statType)
+	if rf, ok := ret.Get(1).(func(context.Context, StatisticType, int64) error); ok {
+		r1 = rf(ctx, statType, limitOveride)
 	} else {
 		r1 = ret.Error(1)
 	}

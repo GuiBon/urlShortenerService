@@ -43,7 +43,7 @@ func main() {
 	}
 
 	// Initialize the redis
-	_, err = statistics.NewRedisStore(cfg.Redis)
+	statisticsStore, err := statistics.NewRedisStore(cfg.Redis)
 	if err != nil {
 		log.Fatalf("Error initializing redis: %s", err.Error())
 	}
@@ -52,8 +52,8 @@ func main() {
 	urlSanitizerCmd := command.URLSanitizerCmdBuilder()
 	slugGeneratorCmd := command.SlugGeneratorCmdBuilder(cfg.Slug.MaximalLenght)
 	slugValidatorCmd := command.SlugValidatorCmdBuilder(cfg.Slug.MaximalLenght)
-	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore)
-	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore)
+	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore, statisticsStore)
+	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore, statisticsStore)
 	deleteExpiredURLsCmd := usecase.DeleteExpiredURLsCmdBuilder(cfg.Slug.TimeToExpire, shortURLStore)
 
 	// Build the cron job function

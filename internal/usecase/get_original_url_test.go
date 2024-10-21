@@ -2,10 +2,12 @@ package usecase
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"urlShortenerService/domain"
 	"urlShortenerService/internal/command"
 	"urlShortenerService/internal/infrastructure/shorturl"
+	"urlShortenerService/internal/infrastructure/statistics"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -31,7 +33,13 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 		slugValidatorCmd := slugValidatorStub(&urlMappingData.Slug, nil)
 		shortURLMock := shorturl.NewMock(t)
 		shortURLMock.On("Get", mock.Anything, urlMappingData.Slug).Return(urlMappingData, nil)
-		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock)
+		var wg sync.WaitGroup
+		wg.Add(1)
+		statisticsMock := statistics.NewMockStore(t)
+		statisticsMock.On("Set", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(nil).Run(func(args mock.Arguments) {
+			wg.Done()
+		})
+		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)
 
 		// When
 		originalURL, err := cmd(context.Background(), urlMappingData.Slug)
@@ -39,12 +47,14 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 
 		// Then
 		assert.Equal(t, urlMappingData.OriginalURL, originalURL)
+		wg.Wait()
 	})
 	t.Run("invalid slug", func(t *testing.T) {
 		// Given
 		slugValidatorCmd := slugValidatorStub(nil, assert.AnError)
 		shortURLMock := shorturl.NewMock(t)
-		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock)
+		statisticsMock := statistics.NewMockStore(t)
+		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)
 
 		// When
 		originalURL, err := cmd(context.Background(), urlMappingData.Slug)
@@ -58,7 +68,8 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 		slugValidatorCmd := slugValidatorStub(nil, nil)
 		shortURLMock := shorturl.NewMock(t)
 		shortURLMock.On("Get", mock.Anything, mock.Anything).Return(domain.URLMapping{}, assert.AnError)
-		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock)
+		statisticsMock := statistics.NewMockStore(t)
+		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)
 
 		// When
 		originalURL, err := cmd(context.Background(), urlMappingData.Slug)
@@ -66,5 +77,26 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 		// Then
 		require.ErrorIs(t, err, assert.AnError)
 		assert.Empty(t, originalURL)
+	})
+	t.Run("failed updating statistics", func(t *testing.T) {
+		// Given
+		slugValidatorCmd := slugValidatorStub(&urlMappingData.Slug, nil)
+		shortURLMock := shorturl.NewMock(t)
+		shortURLMock.On("Get", mock.Anything, urlMappingData.Slug).Return(urlMappingData, nil)
+		var wg sync.WaitGroup
+		wg.Add(1)
+		statisticsMock := statistics.NewMockStore(t)
+		statisticsMock.On("Set", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(assert.AnError).Run(func(args mock.Arguments) {
+			wg.Done()
+		})
+		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)
+
+		// When
+		originalURL, err := cmd(context.Background(), urlMappingData.Slug)
+		require.NoError(t, err)
+
+		// Then
+		assert.Equal(t, urlMappingData.OriginalURL, originalURL)
+		wg.Wait()
 	})
 }
