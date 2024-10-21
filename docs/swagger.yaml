@@ -105,6 +105,56 @@ paths:
           description: Missing URL or URL not HTTP encoded
         "500":
           description: Unexpected error
+  /api/url-shortener/v1/statistics/accessed:
+    get:
+      summary: Retrieve top accessed statistics
+      description: Retrieves top URLs with the highest accessed counter statistics
+      tags:
+        - statistics
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: The limit of result to retrieve (max 1 000)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: Top statistics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTopStatisticsAccessedResponse"
+        "400":
+          description: Invalid query parameter
+        "500":
+          description: Unexpected error
+  /api/url-shortener/v1/statistics/shortened:
+    get:
+      summary: Retrieve top shortened statistics
+      description: Retrieves top URLs with the highest shortened counter statistics
+      tags:
+        - statistics
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          description: The limit of result to retrieve (max 1 000)
+          schema:
+            type: integer
+            example: 10
+      responses:
+        "200":
+          description: Top statistics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetTopStatisticsShortenedResponse"
+        "400":
+          description: Invalid query parameter
+        "500":
+          description: Unexpected error
 
 components:
   schemas:
@@ -143,3 +193,33 @@ components:
         accessed_counter:
           type: integer
           example: 5
+
+    GetTopStatisticsAccessedResponse:
+      type: object
+      properties:
+        urls:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                example: "https://example.com"
+              accessed_counter:
+                type: integer
+                example: 10
+
+    GetTopStatisticsShortenedResponse:
+      type: object
+      properties:
+        urls:
+          type: array
+          items:
+            type: object
+            properties:
+              url:
+                type: string
+                example: "https://example.com"
+              shortened_counter:
+                type: integer
+                example: 10

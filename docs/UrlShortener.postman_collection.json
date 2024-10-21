@@ -114,6 +114,92 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Statistics for a single URL",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/url-shortener/v1/statistics?encoded_url=https%3A%2F%2Fgoogle.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"url-shortener",
+						"v1",
+						"statistics"
+					],
+					"query": [
+						{
+							"key": "encoded_url",
+							"value": "https%3A%2F%2Fgoogle.com"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top accessed URLs statistics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/url-shortener/v1/statistics/accessed?limit=50",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"url-shortener",
+						"v1",
+						"statistics",
+						"accessed"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top shortened URLs statistics",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/url-shortener/v1/statistics/shortened?limit=50",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"url-shortener",
+						"v1",
+						"statistics",
+						"shortened"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "50"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"variable": [

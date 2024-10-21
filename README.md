@@ -89,9 +89,10 @@ The URL Shortener service tracks two types of statistics for each URL:
 
 You can retrieve statistics for a single URL or obtain the top URLs based on a specified statistic type:
 
-* Get One: Retrieve the statistics for a specific URL, including both the shortened and accessed counts.
-* Get Top: Retrieve the top URLs based on either the shortened or accessed count.
+* [Get one URL](http://localhost:8080/swagger/index.html#/statistics/get_api_url_shortener_v1_statistics): Retrieve the statistics for a specific URL, including both the shortened and accessed counts.
+* [Get top URLs accessed](http://localhost:8080/swagger/index.html#/statistics/get_api_url_shortener_v1_statistics_accessed): Retrieve the top URLs based on the accessed count.
+* [Get top URLs shortened](http://localhost:8080/swagger/index.html#/statistics/get_api_url_shortener_v1_statistics_shortened): Retrieve the top URLs based on the shortened count.
 
 ### Configurable Limits
 
-The service allows you to configure the limit on how many URLs are returned for the top statistics option. By default, this limit is set to a specific value, which can be adjusted in the application configuration.
+The service allows you to configure the limit on how many URLs are returned for the top statistics option. By default, this limit is set to a specific value, which can be adjusted in the application configuration. The limit cannot exceed 1 000.
