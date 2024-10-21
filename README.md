@@ -1,6 +1,6 @@
 # URLShortenerService
 
-URLShortenerService is an API that will turned a long URL into a short one.
+URLShortenerService is an API service that will turned a long URL into a short one.
 
 ## Build, run and test
 
@@ -57,7 +57,7 @@ A postman collection is saved under `docs/UrlShortener.postman_collection.json`,
 
 The algorithm takes a URL and generates a short identifier called a slug. It does this by following these steps:
 
-1. **Hashing**: The URL is processed using the SHA-1 hashing function, which creates a unique string of characters.
+1. **Hashing**: The URL is processed using the SHA-1 hashing function, which creates a unique string of 40 hexadecimal characters.
 2. **Base62 Encoding**: The hash is then converted into Base62 format, which uses 62 different characters (0-9, A-Z, a-z) to create shorter strings.
 3. **Truncation**: The resulting string is shortened to 8 characters to create the final slug.
 
@@ -76,7 +76,13 @@ This means that the same URL will always generate the same slug each time it is 
 
 ## Expiration
 
-In this service, a cron job is configured to automatically delete expired URLs. The job runs every 10 minutes and removes any URLs that have been stored for more than one week (The expiration time can be set in the application configuration). This ensures that old, unused URLs are regularly cleaned up, optimizing storage and maintaining the database's performance.
+In this service, a cron job is configured to automatically delete expired URLs. The job runs every 10 minutes and removes any URLs that have been stored for more than one week (The expiration time can be set in the service configuration). This ensures that old, unused URLs are regularly cleaned up, optimizing storage and maintaining the database's performance.
+
+## Cache
+
+In this project, a cache is implemented using Go's `sync.Map`, which provides a thread-safe way to store and access URL across multiple goroutines. The use og a cache helps to improve performance, particularly when dealing with frequently accessed data like shortened URLs. Caching reduces the number of expensive calls to the database by storing results in memory and serving repeated requests directly from the cache. This drastically reduces latency and improves the overall throughput of the service, improving overall performance and response time.
+
+For future improvements, a more robust caching solution with features like automatic eviction, LRU (Least Recently Used) policies, and cache invalidation would be beneficial. This would ensure the cache remains efficient and doesn't overwhelm memory resources. For more details, see the [What's next?](#whats-next) section.
 
 ## Malware detection
 
@@ -109,6 +115,12 @@ The service allows you to configure the limit on how many URLs are returned for 
 
 To ensure a robust and scalable production deployment, several improvements and enhancements can be implemented in the future:
 
+- **Cache**: Cache can be improved. While `sync.Map` provides the necessary concurrency guarantees for safe access in a multi-threaded environment, it is worth noting that it lacks certain advanced features like cache loadup at startup, eviction policies or size limits. Even if the size limits or eviction policies are balanced by having expiration time on the URLs, it's usually a good thing to have those mechanisms in place. In a futur evolution we might want to keep all the URLs stored and without mechanisms to remove stale or rarely accessed data, the cache could grow indefinitely, which may become a problem in production environments as the amount of stored data increases.
+At the moment the cache only lives during lifecycle of the application and will be totally erased at shutdown without reconstruction at startup. One strategy could be to load the cache at startup from the persistent store in the background using mutex to lock the research in the cache until it's fully loaded. Another improvement can be to change the way of storing the data, map are efficient but for a very huge volume of data a binary tree will be faster and cheaper in memory consumption.
+In conclusion to make this cache fully operational for production use, improvements should include:
+    - Implementing a loadup at the application startup
+    - Implementing a Least Recently Used (LRU) eviction policy
+    - Implementing a periodical refresh of the cache in order to handle cross-instance cache evolution
 - **Rate Limiting**: Introduce a rate limiter on URL generation to prevent abuse and control traffic spikes. This will safeguard the service from excessive requests and maintain performance stability.
 - **Database Partitioning**: Partition the URL table in the database to improve query performance and manage large datasets efficiently as the number of shortened URLs grows.
 - **Horizontal Scaling with Kubernetes**: Deploy the service across multiple Kubernetes pods with replica sets to enable better scaling, resilience, and high availability. This will allow the system to handle more traffic and recover from failures faster.

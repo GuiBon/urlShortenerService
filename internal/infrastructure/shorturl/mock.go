@@ -32,18 +32,18 @@ func NewMock(t interface {
 }
 
 // DeleteExpired provides a mock function with given fields: ctx, duration
-func (_m *MockStore) DeleteExpired(ctx context.Context, timeToExpire time.Duration) (int, error) {
+func (_m *MockStore) DeleteExpired(ctx context.Context, timeToExpire time.Duration) ([]string, error) {
 	ret := _m.Called(ctx, timeToExpire)
 
-	var r0 int
+	var r0 []string
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, time.Duration) (int, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, time.Duration) ([]string, error)); ok {
 		return rf(ctx, timeToExpire)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, time.Duration) int); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, time.Duration) []string); ok {
 		r0 = rf(ctx, timeToExpire)
 	} else {
-		r0 = ret.Int(0)
+		r0 = ret.Get(0).([]string)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, time.Duration) error); ok {

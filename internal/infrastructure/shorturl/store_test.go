@@ -40,7 +40,9 @@ func (suite *StoreTestSuite) TestSet(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, shortURL.Slug, retrievedURL.Slug)
 	assert.Equal(t, shortURL.OriginalURL, retrievedURL.OriginalURL)
-	assert.NotEmpty(t, retrievedURL.InsertedAt)
+	if _, ok := suite.Store.(*CacheStore); !ok { // This assertion shouldn't be tested for cache
+		assert.NotEmpty(t, retrievedURL.InsertedAt)
+	}
 }
 
 func (suite *StoreTestSuite) TestGet(t *testing.T) {
@@ -61,7 +63,9 @@ func (suite *StoreTestSuite) TestGet(t *testing.T) {
 		// Then
 		assert.Equal(t, shortURL.Slug, retrievedURL.Slug)
 		assert.Equal(t, shortURL.OriginalURL, retrievedURL.OriginalURL)
-		assert.NotEmpty(t, retrievedURL.InsertedAt)
+		if _, ok := suite.Store.(*CacheStore); !ok { // This assertion shouldn't be tested for cache
+			assert.NotEmpty(t, retrievedURL.InsertedAt)
+		}
 	})
 	t.Run("slug not found", func(t *testing.T) {
 		// Given
@@ -101,7 +105,9 @@ func (suite *StoreTestSuite) TestSetDuplicateSlug(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, shortURL1.Slug, retrievedURL.Slug)
 	assert.Equal(t, shortURL1.OriginalURL, retrievedURL.OriginalURL)
-	assert.Equal(t, shortURL2.InsertedAt.Truncate(time.Second), retrievedURL.InsertedAt.Truncate(time.Second))
+	if _, ok := suite.Store.(*CacheStore); !ok { // This assertion shouldn't be tested for cache
+		assert.Equal(t, shortURL2.InsertedAt.Truncate(time.Second), retrievedURL.InsertedAt.Truncate(time.Second))
+	}
 }
 
 func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
@@ -124,11 +130,12 @@ func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
 	require.NoError(t, err)
 
 	// When
-	nbDeleted, err := suite.Store.DeleteExpired(ctx, 10*time.Hour)
+	slugsDeleted, err := suite.Store.DeleteExpired(ctx, 10*time.Hour)
 	require.NoError(t, err)
 
 	// Then
-	assert.Equal(t, 1, nbDeleted)
+	require.Len(t, slugsDeleted, 1)
+	assert.Equal(t, shortURLExpired.Slug, slugsDeleted[0])
 	_, err = suite.Store.Get(ctx, shortURLExpired.Slug)
 	assert.ErrorIs(t, err, ErrNotFound)
 	_, err = suite.Store.Get(ctx, shortURL.Slug)

@@ -13,7 +13,7 @@ import (
 
 var (
 	// deleteExpiredStmt is the prepared statement to delete expired slug / url couple from the database
-	deleteExpiredStmt string = "DELETE FROM urls WHERE inserted_at < $1;"
+	deleteExpiredStmt string = "DELETE FROM urls WHERE inserted_at < $1 RETURNING slug;"
 	// getStmt is the prepared statement to retrieve a url given a slug from the database
 	getStmt string = "SELECT slug, original_url, inserted_at FROM urls WHERE slug=$1;"
 	// setStmt is the prepared statement to insert a slug / url couple into the database
@@ -61,11 +61,31 @@ func (s *PSQLStore) initTables(ctx context.Context) error {
 }
 
 // DeleteExpired implements the Store interface
-func (s *PSQLStore) DeleteExpired(ctx context.Context, timeToExpire time.Duration) (int, error) {
+func (s *PSQLStore) DeleteExpired(ctx context.Context, timeToExpire time.Duration) ([]string, error) {
 	cutoff := time.Now().UTC().Add(-timeToExpire)
-	commandTag, err := s.conn.Exec(ctx, deleteExpiredStmt, cutoff)
-	deletedCount := commandTag.RowsAffected()
-	return int(deletedCount), err
+
+	rows, err := s.conn.Query(ctx, deleteExpiredStmt, cutoff)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var deletedSlugs []string
+	for rows.Next() {
+		var slug string
+		err := rows.Scan(&slug)
+		if err != nil {
+			return nil, err
+		}
+		deletedSlugs = append(deletedSlugs, slug)
+	}
+
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+
+	return deletedSlugs, err
 }
 
 // Get implements the Store interface

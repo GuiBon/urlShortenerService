@@ -66,11 +66,11 @@ func main() {
 	// Build the cron job function
 	cronJob := func() {
 		glog.Info("cron to delete expired URLs started")
-		nbURLsDeleterd, err := deleteExpiredURLsCmd(context.Background())
+		slugsDeleted, err := deleteExpiredURLsCmd(context.Background())
 		if err != nil {
 			glog.Warningf("failed to delete expired URLs: %w", err)
 		} else {
-			glog.Infof("cron to delete expired URLs done. [%d] URLs deleted", nbURLsDeleterd)
+			glog.Infof("cron to delete expired URLs done. [%d] URLs deleted", len(slugsDeleted))
 		}
 	}
 

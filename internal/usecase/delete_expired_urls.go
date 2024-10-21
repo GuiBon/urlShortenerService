@@ -7,11 +7,11 @@ import (
 )
 
 // DeleteExpiredURLsCmd represents the function signature of the command that deletes expired URLs
-type DeleteExpiredURLsCmd func(ctx context.Context) (int, error)
+type DeleteExpiredURLsCmd func(ctx context.Context) ([]string, error)
 
 // deleteExpiredURLs deletes URLs that have expired
 func deleteExpiredURLs(timeToExpire time.Duration, shortURLStore shorturl.Store) DeleteExpiredURLsCmd {
-	return func(ctx context.Context) (int, error) {
+	return func(ctx context.Context) ([]string, error) {
 		// Deletes expired URL
 		return shortURLStore.DeleteExpired(ctx, timeToExpire)
 	}
