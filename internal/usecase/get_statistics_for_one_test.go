@@ -52,7 +52,7 @@ func TestGetStatisticsForOneCmdBuilder(t *testing.T) {
 		require.ErrorIs(t, err, assert.AnError)
 		assert.Empty(t, urlStatisticsResp)
 	})
-	t.Run("failed updating statistics", func(t *testing.T) {
+	t.Run("failed retrieving statistics", func(t *testing.T) {
 		// Given
 		urlSanitizerCmd := urlSanitizerStub(&originalURL, sanitizedURL, nil)
 		statisticsMock := statistics.NewMockStore(t)
