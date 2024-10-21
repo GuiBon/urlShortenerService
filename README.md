@@ -122,6 +122,7 @@ In conclusion to make this cache fully operational for production use, improveme
     - Implementing a Least Recently Used (LRU) eviction policy
     - Implementing a periodical refresh of the cache in order to handle cross-instance cache evolution
 - **Rate Limiting**: Introduce a rate limiter on URL generation to prevent abuse and control traffic spikes. This will safeguard the service from excessive requests and maintain performance stability.
+- **Malware scanners**: For this project malware scanner is just a dummy one but for a read-to-use in production project the use of real malware scanner like VirusTotal, Google Safe Browsing API or Urlscan.io should be used. In order to speed up the malware scanning process, those scan must be parallelized with a timeout and ignored on error.
 - **Database Partitioning**: Partition the URL table in the database to improve query performance and manage large datasets efficiently as the number of shortened URLs grows.
 - **Horizontal Scaling with Kubernetes**: Deploy the service across multiple Kubernetes pods with replica sets to enable better scaling, resilience, and high availability. This will allow the system to handle more traffic and recover from failures faster.
 - **Load Balancing**: Implement a load balancer to distribute traffic evenly across the different service instances. This will optimize resource usage and prevent any single instance from becoming a bottleneck.
