@@ -80,7 +80,31 @@ paths:
           description: The slug is invalid
         "500":
           description: Unexpected error
-
+  /api/url-shortener/v1/statistics:
+    get:
+      summary: Retrieve statistics for a given URL
+      description: Retrieves both accessed counter and shortened counter statistics for a given URL
+      tags:
+        - statistics
+      parameters:
+        - name: encoded_url
+          in: query
+          required: true
+          description: A HTTP encoded URL
+          schema:
+            type: string
+            example: "https%3A%2F%2Fexample.com"
+      responses:
+        "200":
+          description: Statistics retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetStatisticsForURLResponse"
+        "400":
+          description: Missing URL or URL not HTTP encoded
+        "500":
+          description: Unexpected error
 
 components:
   schemas:
@@ -105,4 +129,17 @@ components:
       properties:
         original_url:
           type: string
-          example: "http://example.com"
+          example: "https://example.com"
+
+    GetStatisticsForURLResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          example: "https://example.com"
+        shortened_counter:
+          type: integer
+          example: 10
+        accessed_counter:
+          type: integer
+          example: 5

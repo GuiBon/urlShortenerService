@@ -55,7 +55,7 @@ func main() {
 	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore, statisticsStore)
 	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore, statisticsStore)
 	deleteExpiredURLsCmd := usecase.DeleteExpiredURLsCmdBuilder(cfg.Slug.TimeToExpire, shortURLStore)
-	_ = usecase.GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsStore)
+	getStatisticsForURLCmd := usecase.GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsStore)
 	_ = usecase.GetTopStatisticsCmdBuilder(statisticsStore)
 
 	// Build the cron job function
@@ -81,7 +81,7 @@ func main() {
 	c.Start()
 
 	// Initialize the HTTP router
-	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd)
+	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd, getStatisticsForURLCmd)
 
 	// Start the service
 	router.Run(fmt.Sprintf(":%d", cfg.ServerDomain.Port))
