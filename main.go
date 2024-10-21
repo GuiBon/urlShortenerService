@@ -79,7 +79,7 @@ func main() {
 
 	// Initialize the cron to delete expired urls and start it
 	c := cron.New()
-	_, err = c.AddFunc("*/1 * * * *", cronJob) // Every 10 minutes
+	_, err = c.AddFunc("*/10 * * * *", cronJob) // Every 10 minutes
 	if err != nil {
 		log.Fatalf("Error initializing delete expired urls cron: %s", err.Error())
 	}

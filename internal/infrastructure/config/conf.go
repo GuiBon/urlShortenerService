@@ -13,8 +13,7 @@ func Load() (*Conf, error) {
 	// Load default
 	viper.SetDefault("redis.max-results", 100)
 	viper.SetDefault("slug.maximal-lenght", 8)
-	// viper.SetDefault("slug.time-to-expire", 7*24*time.Hour) // One week
-	viper.SetDefault("slug.time-to-expire", 1*time.Minute) // One week
+	viper.SetDefault("slug.time-to-expire", 7*24*time.Hour) // One week
 
 	// Load from config file
 	viper.SetConfigName(os.Getenv("env"))
