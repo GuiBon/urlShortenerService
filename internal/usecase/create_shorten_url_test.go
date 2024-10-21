@@ -46,7 +46,7 @@ func TestCreateShortenURLCmdBuilder(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("Set", mock.Anything, sanitizedURL, statistics.StatisticTypeShortened).Return(nil).Run(func(args mock.Arguments) {
+		statisticsMock.On("SetURL", mock.Anything, sanitizedURL, statistics.StatisticTypeShortened).Return(nil).Run(func(args mock.Arguments) {
 			wg.Done()
 		})
 		cmd := CreateShortenURLCmdBuilder(baseURL, urlSanitizerCmd, slugGeneratorCmd, shortURLMock, statisticsMock)
@@ -99,7 +99,7 @@ func TestCreateShortenURLCmdBuilder(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("Set", mock.Anything, sanitizedURL, statistics.StatisticTypeShortened).Return(assert.AnError).Run(func(args mock.Arguments) {
+		statisticsMock.On("SetURL", mock.Anything, sanitizedURL, statistics.StatisticTypeShortened).Return(assert.AnError).Run(func(args mock.Arguments) {
 			wg.Done()
 		})
 		cmd := CreateShortenURLCmdBuilder(baseURL, urlSanitizerCmd, slugGeneratorCmd, shortURLMock, statisticsMock)

@@ -36,7 +36,7 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("Set", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(nil).Run(func(args mock.Arguments) {
+		statisticsMock.On("SetURL", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(nil).Run(func(args mock.Arguments) {
 			wg.Done()
 		})
 		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)
@@ -86,7 +86,7 @@ func TestGetOriginalURLCmdBuilder(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(1)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("Set", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(assert.AnError).Run(func(args mock.Arguments) {
+		statisticsMock.On("SetURL", mock.Anything, urlMappingData.OriginalURL, statistics.StatisticTypeAccessed).Return(assert.AnError).Run(func(args mock.Arguments) {
 			wg.Done()
 		})
 		cmd := GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLMock, statisticsMock)

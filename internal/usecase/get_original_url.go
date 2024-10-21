@@ -29,7 +29,7 @@ func getOriginalURL(slugValidatorCmd command.SlugValidatorCmd, shortURLStore sho
 
 		// Update statistics
 		go func(url string) {
-			err := statisticsStore.Set(context.Background(), url, statistics.StatisticTypeAccessed)
+			err := statisticsStore.SetURL(context.Background(), url, statistics.StatisticTypeAccessed)
 			if err != nil {
 				glog.Errorf("failed to set [%s] statistics for [%s]: %w", statistics.StatisticTypeAccessed, url, err)
 			}

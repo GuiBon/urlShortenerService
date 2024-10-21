@@ -16,43 +16,43 @@ type StoreTestSuite struct {
 func RunStoreTests(t *testing.T, store Store) {
 	suite := &StoreTestSuite{Store: store}
 
-	t.Run("TestSet", suite.TestSet)
-	t.Run("TestGetOne", suite.TestGetOne)
-	t.Run("TestGetTop", suite.TestGetTop)
+	t.Run("TestSetURL", suite.TestSetURL)
+	t.Run("TestGetURL", suite.TestGetURL)
+	t.Run("TestGetTopURLs", suite.TestGetTopURLs)
 }
 
-func (suite *StoreTestSuite) TestSet(t *testing.T) {
+func (suite *StoreTestSuite) TestSetURL(t *testing.T) {
 	// Given
 	ctx := context.Background()
 	url := "https://example.com/set-test"
 
 	// When
-	err := suite.Store.Set(ctx, url, StatisticTypeAccessed)
+	err := suite.Store.SetURL(ctx, url, StatisticTypeAccessed)
 	require.NoError(t, err)
-	err = suite.Store.Set(ctx, url, StatisticTypeAccessed)
+	err = suite.Store.SetURL(ctx, url, StatisticTypeAccessed)
 	require.NoError(t, err)
-	err = suite.Store.Set(ctx, url, StatisticTypeShortened)
+	err = suite.Store.SetURL(ctx, url, StatisticTypeShortened)
 	require.NoError(t, err)
 
 	// Then
-	stats, err := suite.Store.GetOne(ctx, url)
+	stats, err := suite.Store.GetURL(ctx, url)
 	require.NoError(t, err)
 	assert.Equal(t, url, stats.URL)
 	assert.Equal(t, 2, stats.AccessedCounter)
 	assert.Equal(t, 1, stats.ShortenedCounter)
 }
 
-func (suite *StoreTestSuite) TestGetOne(t *testing.T) {
+func (suite *StoreTestSuite) TestGetURL(t *testing.T) {
 	// Given
 	ctx := context.Background()
 	url := "https://example.com/getone-test"
-	err := suite.Store.Set(ctx, url, StatisticTypeAccessed)
+	err := suite.Store.SetURL(ctx, url, StatisticTypeAccessed)
 	require.NoError(t, err)
-	err = suite.Store.Set(ctx, url, StatisticTypeShortened)
+	err = suite.Store.SetURL(ctx, url, StatisticTypeShortened)
 	require.NoError(t, err)
 
 	// When
-	stats, err := suite.Store.GetOne(ctx, url)
+	stats, err := suite.Store.GetURL(ctx, url)
 	require.NoError(t, err)
 
 	// Then
@@ -61,7 +61,7 @@ func (suite *StoreTestSuite) TestGetOne(t *testing.T) {
 	assert.Equal(t, 1, stats.ShortenedCounter)
 }
 
-func (suite *StoreTestSuite) TestGetTop(t *testing.T) {
+func (suite *StoreTestSuite) TestGetTopURLs(t *testing.T) {
 	t.Run("nominal", func(t *testing.T) {
 		// Given
 		ctx := context.Background()
@@ -72,13 +72,13 @@ func (suite *StoreTestSuite) TestGetTop(t *testing.T) {
 		}
 		for _, stat := range expectedStats {
 			for i := 0; i < stat.AccessedCounter; i++ {
-				err := suite.Store.Set(ctx, stat.URL, StatisticTypeAccessed)
+				err := suite.Store.SetURL(ctx, stat.URL, StatisticTypeAccessed)
 				require.NoError(t, err)
 			}
 		}
 
 		// When
-		stats, err := suite.Store.GetTop(ctx, StatisticTypeAccessed, int64(len(expectedStats)))
+		stats, err := suite.Store.GetTopURLs(ctx, StatisticTypeAccessed, int64(len(expectedStats)))
 		require.NoError(t, err)
 
 		// Then

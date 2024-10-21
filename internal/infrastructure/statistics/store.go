@@ -14,10 +14,10 @@ var (
 
 // Store represents operations on statistics Store
 type Store interface {
-	// GetOne retrieves the statistic for a single URL
-	GetOne(ctx context.Context, url string) (domain.URLStatistic, error)
-	// GetTop retrieves top statistic of the choosen type for the URLs
-	GetTop(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error)
-	// Set stores the statistic of the choosen type for the associated URL
-	Set(ctx context.Context, url string, statType StatisticType) error
+	// GetURL retrieves the statistic for a single URL
+	GetURL(ctx context.Context, url string) (domain.URLStatistic, error)
+	// GetTopURLs retrieves top statistic of the choosen type for the URLs
+	GetTopURLs(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error)
+	// SetURL stores the statistic of the choosen type for the associated URL
+	SetURL(ctx context.Context, url string, statType StatisticType) error
 }

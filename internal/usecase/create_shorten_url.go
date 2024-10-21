@@ -38,7 +38,7 @@ func createShortenURL(baseURL string, urlSanitizerCmd command.URLSanitizerCmd, s
 
 		// Update statistics
 		go func(url string) {
-			err := statisticsStore.Set(context.Background(), url, statistics.StatisticTypeShortened)
+			err := statisticsStore.SetURL(context.Background(), url, statistics.StatisticTypeShortened)
 			if err != nil {
 				glog.Errorf("failed to set [%s] statistics for [%s]: %w", statistics.StatisticTypeShortened, url, err)
 			}

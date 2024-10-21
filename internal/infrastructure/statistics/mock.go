@@ -29,8 +29,8 @@ func NewMockStore(t interface {
 	return mock
 }
 
-// GetOne provides a mock function with given fields: ctx, url
-func (_m *MockStore) GetOne(ctx context.Context, url string) (domain.URLStatistic, error) {
+// GetURL provides a mock function with given fields: ctx, url
+func (_m *MockStore) GetURL(ctx context.Context, url string) (domain.URLStatistic, error) {
 	ret := _m.Called(ctx, url)
 
 	var r0 domain.URLStatistic
@@ -53,8 +53,8 @@ func (_m *MockStore) GetOne(ctx context.Context, url string) (domain.URLStatisti
 	return r0, r1
 }
 
-// GetTop provides a mock function with given fields: ctx, statType
-func (_m *MockStore) GetTop(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
+// GetTopURLs provides a mock function with given fields: ctx, statType
+func (_m *MockStore) GetTopURLs(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
 	ret := _m.Called(ctx, statType, limitOveride)
 
 	var r0 []domain.URLStatistic
@@ -79,8 +79,8 @@ func (_m *MockStore) GetTop(ctx context.Context, statType StatisticType, limitOv
 	return r0, r1
 }
 
-// Set provides a mock function with given fields: ctx, url, statType
-func (_m *MockStore) Set(ctx context.Context, url string, statType StatisticType) error {
+// SetURL provides a mock function with given fields: ctx, url, statType
+func (_m *MockStore) SetURL(ctx context.Context, url string, statType StatisticType) error {
 	ret := _m.Called(ctx, url, statType)
 
 	var r0 error

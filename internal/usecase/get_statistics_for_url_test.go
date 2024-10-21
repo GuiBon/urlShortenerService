@@ -12,7 +12,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetStatisticsForOneCmdBuilder(t *testing.T) {
+func TestGetStatisticsForURLCmdBuilder(t *testing.T) {
 	urlSanitizerStub := func(expectedURL *string, returnedURL string, err error) command.URLSanitizerCmd {
 		return func(rawURL string) (string, error) {
 			if expectedURL != nil {
@@ -29,8 +29,8 @@ func TestGetStatisticsForOneCmdBuilder(t *testing.T) {
 		expectedURLStatistics := domain.URLStatistic{URL: sanitizedURL, AccessedCounter: 1, ShortenedCounter: 2}
 		urlSanitizerCmd := urlSanitizerStub(&originalURL, sanitizedURL, nil)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("GetOne", mock.Anything, sanitizedURL).Return(expectedURLStatistics, nil)
-		cmd := GetStatisticsForOneCmdBuilder(urlSanitizerCmd, statisticsMock)
+		statisticsMock.On("GetURL", mock.Anything, sanitizedURL).Return(expectedURLStatistics, nil)
+		cmd := GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsMock)
 
 		// When
 		urlStatisticsResp, err := cmd(context.Background(), originalURL)
@@ -43,7 +43,7 @@ func TestGetStatisticsForOneCmdBuilder(t *testing.T) {
 		// Given
 		urlSanitizerCmd := urlSanitizerStub(nil, "", assert.AnError)
 		statisticsMock := statistics.NewMockStore(t)
-		cmd := GetStatisticsForOneCmdBuilder(urlSanitizerCmd, statisticsMock)
+		cmd := GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsMock)
 
 		// When
 		urlStatisticsResp, err := cmd(context.Background(), originalURL)
@@ -56,8 +56,8 @@ func TestGetStatisticsForOneCmdBuilder(t *testing.T) {
 		// Given
 		urlSanitizerCmd := urlSanitizerStub(&originalURL, sanitizedURL, nil)
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("GetOne", mock.Anything, mock.Anything).Return(domain.URLStatistic{}, assert.AnError)
-		cmd := GetStatisticsForOneCmdBuilder(urlSanitizerCmd, statisticsMock)
+		statisticsMock.On("GetURL", mock.Anything, mock.Anything).Return(domain.URLStatistic{}, assert.AnError)
+		cmd := GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsMock)
 
 		// When
 		urlStatisticsResp, err := cmd(context.Background(), originalURL)

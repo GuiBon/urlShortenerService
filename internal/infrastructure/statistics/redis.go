@@ -35,8 +35,8 @@ func NewRedisStore(cfg config.RedisConfig) (*RedisStore, error) {
 	}, nil
 }
 
-// GetOne implements the Store interface
-func (s *RedisStore) GetOne(ctx context.Context, url string) (domain.URLStatistic, error) {
+// GetURL implements the Store interface
+func (s *RedisStore) GetURL(ctx context.Context, url string) (domain.URLStatistic, error) {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
@@ -57,8 +57,8 @@ func (s *RedisStore) GetOne(ctx context.Context, url string) (domain.URLStatisti
 	}, nil
 }
 
-// GetTop implements the Store interface
-func (s *RedisStore) GetTop(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
+// GetTopURLs implements the Store interface
+func (s *RedisStore) GetTopURLs(ctx context.Context, statType StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
 	var limit = s.maxResults
 	if limitOveride != 0 {
 		limit = limitOveride
@@ -91,8 +91,8 @@ func (s *RedisStore) GetTop(ctx context.Context, statType StatisticType, limitOv
 	return stats, nil
 }
 
-// Set implements the Store interface
-func (s *RedisStore) Set(ctx context.Context, url string, statType StatisticType) error {
+// SetURL implements the Store interface
+func (s *RedisStore) SetURL(ctx context.Context, url string, statType StatisticType) error {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 

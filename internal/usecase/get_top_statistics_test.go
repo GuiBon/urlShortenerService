@@ -21,7 +21,7 @@ func TestGetTopStatisticsCmdBuilder(t *testing.T) {
 			{URL: "https://example.com/2", ShortenedCounter: 4},
 		}
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("GetTop", mock.Anything, statType, limitOveride).Return(expectedURLStatistics, nil)
+		statisticsMock.On("GetTopURLs", mock.Anything, statType, limitOveride).Return(expectedURLStatistics, nil)
 		cmd := GetTopStatisticsCmdBuilder(statisticsMock)
 
 		// When
@@ -34,7 +34,7 @@ func TestGetTopStatisticsCmdBuilder(t *testing.T) {
 	t.Run("failed retrieving statistics", func(t *testing.T) {
 		// Given
 		statisticsMock := statistics.NewMockStore(t)
-		statisticsMock.On("GetTop", mock.Anything, mock.Anything, mock.Anything).Return([]domain.URLStatistic{}, assert.AnError)
+		statisticsMock.On("GetTopURLs", mock.Anything, mock.Anything, mock.Anything).Return([]domain.URLStatistic{}, assert.AnError)
 		cmd := GetTopStatisticsCmdBuilder(statisticsMock)
 
 		// When

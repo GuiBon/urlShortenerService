@@ -55,6 +55,8 @@ func main() {
 	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore, statisticsStore)
 	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore, statisticsStore)
 	deleteExpiredURLsCmd := usecase.DeleteExpiredURLsCmdBuilder(cfg.Slug.TimeToExpire, shortURLStore)
+	_ = usecase.GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsStore)
+	_ = usecase.GetTopStatisticsCmdBuilder(statisticsStore)
 
 	// Build the cron job function
 	cronJob := func() {

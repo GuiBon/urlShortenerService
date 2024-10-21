@@ -12,7 +12,7 @@ type GetTopStatisticsCmd func(ctx context.Context, statType statistics.Statistic
 // getTopStatistics retrieves top statistics for a given statistic type
 func getTopStatistics(statisticsStore statistics.Store) GetTopStatisticsCmd {
 	return func(ctx context.Context, statType statistics.StatisticType, limitOveride int64) ([]domain.URLStatistic, error) {
-		return statisticsStore.GetTop(ctx, statType, limitOveride)
+		return statisticsStore.GetTopURLs(ctx, statType, limitOveride)
 	}
 }
 
