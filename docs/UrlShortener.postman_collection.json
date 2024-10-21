@@ -82,6 +82,59 @@
 			"response": []
 		},
 		{
+			"name": "Shorten malicious URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Parse the JSON response body",
+							"var jsonData = pm.response.json();",
+							"",
+							"// Check if short_url exists in the response",
+							"if (jsonData.short_url) {",
+							"    // Save the short_url value to a collection variable",
+							"    pm.collectionVariables.set(\"short_url\", jsonData.short_url);",
+							"} else {",
+							"    console.warn(\"short_url not found in the response.\");",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"original_url\": \"https://en.wikipedia.org/wiki/Malware\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/url-shortener/v1/shorten",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"url-shortener",
+						"v1",
+						"shorten"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Retrieve original URL",
 			"request": {
 				"method": "GET",
@@ -110,6 +163,20 @@
 							"key": "redirect",
 							"value": "true"
 						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve original URL - Force",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{short_url}}",
+					"host": [
+						"{{short_url}}"
 					]
 				}
 			},

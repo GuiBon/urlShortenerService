@@ -104,3 +104,16 @@ You can retrieve statistics for a single URL or obtain the top URLs based on a s
 ### Configurable Limits
 
 The service allows you to configure the limit on how many URLs are returned for the top statistics option. By default, this limit is set to a specific value, which can be adjusted in the application configuration. The limit cannot exceed 1 000.
+
+## What's next ?
+
+To ensure a robust and scalable production deployment, several improvements and enhancements can be implemented in the future:
+
+- **Rate Limiting**: Introduce a rate limiter on URL generation to prevent abuse and control traffic spikes. This will safeguard the service from excessive requests and maintain performance stability.
+- **Database Partitioning**: Partition the URL table in the database to improve query performance and manage large datasets efficiently as the number of shortened URLs grows.
+- **Horizontal Scaling with Kubernetes**: Deploy the service across multiple Kubernetes pods with replica sets to enable better scaling, resilience, and high availability. This will allow the system to handle more traffic and recover from failures faster.
+- **Load Balancing**: Implement a load balancer to distribute traffic evenly across the different service instances. This will optimize resource usage and prevent any single instance from becoming a bottleneck.
+- **Log Aggregation with Kibana**: Extract and centralize logs in Kibana for better visibility and troubleshooting. This would provide a more comprehensive view of the system's behavior and help detect issues in real-time.
+- **Monitoring and Alerts**: Set up monitoring tools like Grafana or Datadog to track system performance metrics, uptime, and health. Establish alerts to proactively respond to incidents, ensuring smooth and uninterrupted service.
+
+These enhancements will contribute to a more resilient, scalable, and well-monitored service, ready for a reliable production environment.
