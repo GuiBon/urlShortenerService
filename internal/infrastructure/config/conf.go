@@ -11,6 +11,7 @@ import (
 // Load reads and loads the config inside a structure
 func Load() (*Conf, error) {
 	// Load default
+	viper.SetDefault("redis.max-results", 100)
 	viper.SetDefault("slug.maximal-lenght", 8)
 	viper.SetDefault("slug.time-to-expire", 7*24*time.Hour) // One week
 
@@ -36,6 +37,7 @@ func Load() (*Conf, error) {
 // Conf represents the configuration of the application
 type Conf struct {
 	Database     PSQLConnConfig     `mapstructure:"database"`
+	Redis        RedisConfig        `mapstructure:"redis"`
 	ServerDomain ServerDomainConfig `mapstructure:"server-domain"`
 	Slug         SlugConfig         `mapstructure:"slug"`
 }
@@ -52,6 +54,18 @@ type PSQLConnConfig struct {
 // ToConnString generates a conn string based on the conn config
 func (c *PSQLConnConfig) ToConnString() string {
 	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", c.User, c.Password, c.Host, c.Port, c.DbName)
+}
+
+// RedisConfig represents the configuration to connect to a Redis
+type RedisConfig struct {
+	Host       string `mapstructure:"host"`
+	Port       int    `mapstructure:"port"`
+	MaxResults int    `mapstructure:"max-results"`
+}
+
+// ToAddr generates a addr string based on the redis config
+func (c *RedisConfig) ToAddr() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
 // ServerDomainConfig represents the configuration of the server domain

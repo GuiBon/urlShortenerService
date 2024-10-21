@@ -4,6 +4,9 @@ database:
   dbname: testdb
   host: localhost
   port: 54322
+redis:
+  host: localhost
+  port: 63791
 server-domain:
   scheme: http
   domain: localhost

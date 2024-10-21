@@ -52,6 +52,20 @@ func TestToConnString(t *testing.T) {
 	assert.Equal(t, "postgres://user:password@localhost:5432/dbtest?sslmode=disable", connString)
 }
 
+func TestToAddr(t *testing.T) {
+	// Given
+	conf := RedisConfig{
+		Host: "localhost",
+		Port: 6379,
+	}
+
+	// When
+	addr := conf.ToAddr()
+
+	// Then
+	assert.Equal(t, "localhost:6379", addr)
+}
+
 func TestCreateBaseURL(t *testing.T) {
 	t.Run("with port", func(t *testing.T) {
 		// Given

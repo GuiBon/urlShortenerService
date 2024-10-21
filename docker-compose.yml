@@ -14,6 +14,18 @@ services:
       interval: 2s
       timeout: 5s
       retries: 10
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "63791:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
 
   url-shortener-service:
     image: url-shortener-service
@@ -25,7 +37,10 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   postgres_data:
+  redis_data:
 

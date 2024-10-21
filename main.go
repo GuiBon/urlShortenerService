@@ -10,6 +10,7 @@ import (
 	"urlShortenerService/internal/command"
 	"urlShortenerService/internal/infrastructure/config"
 	"urlShortenerService/internal/infrastructure/shorturl"
+	"urlShortenerService/internal/infrastructure/statistics"
 	"urlShortenerService/internal/transport/http"
 	"urlShortenerService/internal/usecase"
 
@@ -39,6 +40,12 @@ func main() {
 	shortURLStore, err := shorturl.NewPSQLStore(cfg.Database)
 	if err != nil {
 		log.Fatalf("Error initializing database [%s]: %s", cfg.Database.DbName, err.Error())
+	}
+
+	// Initialize the redis
+	_, err = statistics.NewRedisStore(cfg.Redis)
+	if err != nil {
+		log.Fatalf("Error initializing redis: %s", err.Error())
 	}
 
 	// Build the commands

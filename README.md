@@ -77,3 +77,21 @@ This means that the same URL will always generate the same slug each time it is 
 ## Expiration
 
 In this service, a cron job is configured to automatically delete expired URLs. The job runs every 10 minutes and removes any URLs that have been stored for more than one week (The expiration time can be set in the application configuration). This ensures that old, unused URLs are regularly cleaned up, optimizing storage and maintaining the database's performance.
+
+## Statistics
+
+The URL Shortener service tracks two types of statistics for each URL:
+
+1. Shortened Count: The number of times this URL has been shortened.
+2. Accessed Count: The number of times this URL has been accessed.
+
+### Retrieving Statistics
+
+You can retrieve statistics for a single URL or obtain the top URLs based on a specified statistic type:
+
+* Get One: Retrieve the statistics for a specific URL, including both the shortened and accessed counts.
+* Get Top: Retrieve the top URLs based on either the shortened or accessed count.
+
+### Configurable Limits
+
+The service allows you to configure the limit on how many URLs are returned for the top statistics option. By default, this limit is set to a specific value, which can be adjusted in the application configuration.
