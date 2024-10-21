@@ -24,7 +24,7 @@ func TestCreateAPIError(t *testing.T) {
 		assert.Equal(t, apiError.Name, fullAPIError.Name)
 		assert.Equal(t, apiError.Description, fullAPIError.Description)
 		assert.Equal(t, apiError.Hint, fullAPIError.Hint)
-		assert.Nil(t, fullAPIError.Debug)
+		assert.Empty(t, fullAPIError.Debug)
 	})
 	t.Run("non release mode", func(t *testing.T) {
 		// Given
@@ -42,7 +42,24 @@ func TestCreateAPIError(t *testing.T) {
 		assert.Equal(t, apiError.Name, fullAPIError.Name)
 		assert.Equal(t, apiError.Description, fullAPIError.Description)
 		assert.Equal(t, apiError.Hint, fullAPIError.Hint)
-		assert.Equal(t, assert.AnError, fullAPIError.Debug)
+		assert.Equal(t, assert.AnError.Error(), fullAPIError.Debug)
+	})
+	t.Run("empty error", func(t *testing.T) {
+		// Given
+		gin.SetMode(gin.DebugMode)
+		apiError := ApiError{
+			Name:        "test name",
+			Description: "test description",
+			Hint:        "test hint",
+		}
 
+		// When
+		fullAPIError := CreateAPIError(apiError, nil)
+
+		// Then
+		assert.Equal(t, apiError.Name, fullAPIError.Name)
+		assert.Equal(t, apiError.Description, fullAPIError.Description)
+		assert.Equal(t, apiError.Hint, fullAPIError.Hint)
+		assert.Empty(t, fullAPIError.Debug)
 	})
 }

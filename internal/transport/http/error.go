@@ -12,13 +12,13 @@ type ApiError struct {
 // fullAPIError represents a full HTTP error with debug
 type fullAPIError struct {
 	ApiError
-	Debug error `json:"debug"`
+	Debug string `json:"debug"`
 }
 
 // CreateAPIError creates an API error with debug value for non release mode only
 func CreateAPIError(apiError ApiError, err error) fullAPIError {
-	if gin.Mode() == gin.ReleaseMode {
+	if gin.Mode() == gin.ReleaseMode || err == nil {
 		return fullAPIError{ApiError: apiError}
 	}
-	return fullAPIError{ApiError: apiError, Debug: err}
+	return fullAPIError{ApiError: apiError, Debug: err.Error()}
 }

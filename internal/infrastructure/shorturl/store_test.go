@@ -110,13 +110,14 @@ func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
 	shortURLExpired := domain.URLMapping{
 		Slug:        "expired",
 		OriginalURL: "https://example.com/expired",
-		InsertedAt:  time.Now().Add(-24 * time.Hour).UTC(),
+		InsertedAt:  time.Now().UTC().Add(-24 * time.Hour),
 	}
 	shortURL := domain.URLMapping{
-		Slug:        "expired",
-		OriginalURL: "https://example.com/expired",
+		Slug:        "active",
+		OriginalURL: "https://example.com/active",
 		InsertedAt:  time.Now().UTC(),
 	}
+
 	err := suite.Store.Set(ctx, shortURLExpired)
 	require.NoError(t, err)
 	err = suite.Store.Set(ctx, shortURL)

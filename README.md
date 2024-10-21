@@ -78,6 +78,14 @@ This means that the same URL will always generate the same slug each time it is 
 
 In this service, a cron job is configured to automatically delete expired URLs. The job runs every 10 minutes and removes any URLs that have been stored for more than one week (The expiration time can be set in the application configuration). This ensures that old, unused URLs are regularly cleaned up, optimizing storage and maintaining the database's performance.
 
+## Malware detection
+
+The service includes a malware detection feature that checks each URL for potential malware at retrieval. If a URL is flagged as containing malware, the service will respond with a "403 Forbidden" status, preventing access to the URL. However, you can override this behavior by using the [/force API](http://localhost:8080/swagger/index.html#/short%20URL/get__slug__force) to force a response, even if the URL is considered malicious.
+
+### How to trigger ?
+
+In this project, the malware scanner is a dummy implementation. To trigger the malware detection, simply use a URL that contains the keywords "malware" or "virus" in its path. These URLs will be flagged as containing malware, allowing you to test the system's behavior when malicious content is detected.
+
 ## Statistics
 
 The URL Shortener service tracks two types of statistics for each URL:

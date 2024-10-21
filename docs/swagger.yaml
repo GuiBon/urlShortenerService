@@ -45,7 +45,47 @@ paths:
   /{slug}:
     get:
       summary: Retrieve an original URL
-      description: Retrieves an original URL given a slug
+      description: Retrieves an original non malicious URL given a slug
+      tags:
+        - short URL
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          description: The slug for the shortened URL
+          schema:
+            type: string
+            example: abc12345
+        - name: redirect
+          in: query
+          required: false
+          description: If set to 'true', redirects to the original URL instead of returning it
+          schema:
+            type: string
+            enum:
+              - "true"
+            default: "false"
+      responses:
+        "200":
+          description: Original URL retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetOriginalURLResponse"
+        "302":
+          description: Original URL retrieved and redirecting to it as asked
+        "403":
+          description: A malware has been detected on the URL, if you really want to access the URL, use /force API
+        "404":
+          description: No URL associated to the given slug found
+        "422":
+          description: The slug is invalid
+        "500":
+          description: Unexpected error
+  /{slug}/force:
+    get:
+      summary: Force to retrieve an original URL
+      description: Force the retrieval of an original URL (even if malicious) given a slug
       tags:
         - short URL
       parameters:

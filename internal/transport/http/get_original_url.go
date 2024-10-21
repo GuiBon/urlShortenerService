@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"urlShortenerService/internal/command"
+	"urlShortenerService/internal/infrastructure/malwarescanner"
 	"urlShortenerService/internal/infrastructure/shorturl"
 	"urlShortenerService/internal/usecase"
 
@@ -44,6 +45,13 @@ func getOriginalURLHandler(cmd usecase.GetOriginalURLCmd) gin.HandlerFunc {
 			} else {
 				c.JSON(http.StatusOK, GetOriginalURLResponse{OriginalURL: originalURL})
 			}
+			return
+		case malwarescanner.ErrMalswareURL:
+			c.JSON(http.StatusForbidden, CreateAPIError(ApiError{
+				Name:        "forbidden",
+				Description: "a malware has been detected within the URL",
+				Hint:        "if you really want to continue use /force API",
+			}, err))
 			return
 		case shorturl.ErrNotFound:
 			c.JSON(http.StatusNotFound, CreateAPIError(ApiError{

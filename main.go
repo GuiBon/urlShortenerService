@@ -9,6 +9,7 @@ import (
 	"urlShortenerService/domain"
 	"urlShortenerService/internal/command"
 	"urlShortenerService/internal/infrastructure/config"
+	"urlShortenerService/internal/infrastructure/malwarescanner"
 	"urlShortenerService/internal/infrastructure/shorturl"
 	"urlShortenerService/internal/infrastructure/statistics"
 	"urlShortenerService/internal/transport/http"
@@ -48,12 +49,16 @@ func main() {
 		log.Fatalf("Error initializing redis: %s", err.Error())
 	}
 
+	// Initialize malware scanner
+	malwareScanner := malwarescanner.NewDummyScanner()
+
 	// Build the commands
 	urlSanitizerCmd := command.URLSanitizerCmdBuilder()
 	slugGeneratorCmd := command.SlugGeneratorCmdBuilder(cfg.Slug.MaximalLenght)
 	slugValidatorCmd := command.SlugValidatorCmdBuilder(cfg.Slug.MaximalLenght)
 	createShortenURLCmd := usecase.CreateShortenURLCmdBuilder(cfg.ServerDomain.CreateBaseURL(), urlSanitizerCmd, slugGeneratorCmd, shortURLStore, statisticsStore)
-	getOriginalURLCmd := usecase.GetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore, statisticsStore)
+	getOriginalURLCmd := usecase.GetOriginalURLWithMalwareScanCmdBuilder(slugValidatorCmd, malwareScanner, shortURLStore, statisticsStore)
+	forceGetOriginalURLCmd := usecase.ForceGetOriginalURLCmdBuilder(slugValidatorCmd, shortURLStore, statisticsStore)
 	deleteExpiredURLsCmd := usecase.DeleteExpiredURLsCmdBuilder(cfg.Slug.TimeToExpire, shortURLStore)
 	getStatisticsForURLCmd := usecase.GetStatisticsForURLCmdBuilder(urlSanitizerCmd, statisticsStore)
 	getTopStatisticsCmd := usecase.GetTopStatisticsCmdBuilder(statisticsStore)
@@ -74,14 +79,14 @@ func main() {
 
 	// Initialize the cron to delete expired urls and start it
 	c := cron.New()
-	_, err = c.AddFunc("*/10 * * * *", cronJob) // Every 10 minutes
+	_, err = c.AddFunc("*/1 * * * *", cronJob) // Every 10 minutes
 	if err != nil {
 		log.Fatalf("Error initializing delete expired urls cron: %s", err.Error())
 	}
 	c.Start()
 
 	// Initialize the HTTP router
-	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd, getStatisticsForURLCmd, getTopStatisticsCmd)
+	router := http.NewBuilder(domain.Environment(os.Getenv("env"))).BuildRouter(createShortenURLCmd, getOriginalURLCmd, forceGetOriginalURLCmd, getStatisticsForURLCmd, getTopStatisticsCmd)
 
 	// Start the service
 	router.Run(fmt.Sprintf(":%d", cfg.ServerDomain.Port))
