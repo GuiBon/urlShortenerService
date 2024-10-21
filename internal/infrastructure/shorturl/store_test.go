@@ -82,7 +82,7 @@ func (suite *StoreTestSuite) TestSetDuplicateSlug(t *testing.T) {
 	shortURL1 := domain.URLMapping{
 		Slug:        "duplicate",
 		OriginalURL: "https://example.com/duplicate",
-		InsertedAt:  time.Now().Add(-4 * time.Hour).UTC(),
+		InsertedAt:  time.Now().Add(-2 * time.Hour).UTC(),
 	}
 	shortURL2 := domain.URLMapping{
 		Slug:        "duplicate",
@@ -124,7 +124,7 @@ func (suite *StoreTestSuite) TestDeleteExpired(t *testing.T) {
 	require.NoError(t, err)
 
 	// When
-	nbDeleted, err := suite.Store.DeleteExpired(ctx, 1*time.Hour)
+	nbDeleted, err := suite.Store.DeleteExpired(ctx, 10*time.Hour)
 	require.NoError(t, err)
 
 	// Then
